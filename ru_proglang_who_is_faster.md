@@ -228,10 +228,10 @@ pub fn swap<T: Copy>(array: &mut [T], a: usize, b: usize) {
 }
 
 pub fn sort<T: Copy>(array: &mut [T], cmp: fn(&T, &T) -> i32) {
-    let n = array.len();
+    let size = array.len();
 
-    for i in 0..n {
-        for j in 0..n - i - 1 {
+    for i in 0..size {
+        for j in 0..size - i - 1 {
             if cmp(&array[j], &array[j + 1]) > 0 {
                 swap(array, j, j + 1);
             }
@@ -247,6 +247,7 @@ pub fn sort<T: Copy>(array: &mut [T], cmp: fn(&T, &T) -> i32) {
 
 В Zig реализация обобщённого программирования отличается, процедурные
 макросы и generic'и объединены там в одну сущность: `comptime`.
+Пример функции `sort` для Zig:
 
 ```zig
 const std = @import("std");
@@ -258,16 +259,12 @@ fn swap(comptime T: type, a: *T, b: *T) void {
 }
 
 fn sort(comptime T: type, array: []T, cmp: fn(a: *const T, b: *const T) i32) void {
-    const n = array.len;
+    const size = array.len;
 
-    for (array) |elem, i| {
-        for (array) |elem2, j| {
-            if ((i == n - 1) || (j == n - 1 - i)) {
-                break;
-            }
-
-            if (cmp(elem, elem2) == std.Order.GT) {
-                swap(&elem, &elem2);
+    for (array) |a, i| {
+        for (array[0..size - i - 1]) |b, j| {
+            if (cmp(a, b) == std.Order.GT) {
+                swap(&a, &b);
             }
         }
     }
@@ -296,4 +293,4 @@ fn sort(comptime T: type, array: []T, cmp: fn(a: *const T, b: *const T) i32) voi
 
 ## Неопределённое поведение
 
-
+TODO
